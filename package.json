@@ -1,0 +1,19 @@
+{
+  "name": "fis3-prepackager-stand-alone-pack",
+  "version": "1.0.0",
+  "description": "独立打包 ========================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fex-team/fis3-prepackager-stand-alone-pack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fex-team/fis3-prepackager-stand-alone-pack/issues"
+  },
+  "homepage": "https://github.com/fex-team/fis3-prepackager-stand-alone-pack#readme"
+}
