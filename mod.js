@@ -46,7 +46,4 @@ var require, define;
     require.alias = function (id) {
         return id.replace(/\.js$/i, '');
     };
-
-    require.timeout = 5000;
-
 })(this);

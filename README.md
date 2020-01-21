@@ -16,7 +16,9 @@ fis.match('::package', {
 
         // 替换这些文件里面的路径引用。
         // 如果不配置，源码中对于打包文件的引用是不正确的。
-        'replaceFiles': ['src/components/Editor.tsx']
+        'replaceFiles': ['src/components/Editor.tsx'],
+
+        'modJs': ''// 模块化实现的代码，可以不用指定，默认为当前目录的 mod.js
     })
 });
 ```

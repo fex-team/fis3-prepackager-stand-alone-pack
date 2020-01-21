@@ -3,23 +3,24 @@
  */
 const fs = require('fs');
 const path = require('path');
-const modJS = fs.readFileSync(path.join(__dirname, 'mod.js'), 'utf8');
+const modJs = fs.readFileSync(path.join(__dirname, 'mod.js'), 'utf8');
 const root = fis.project.getProjectPath();
 const baseFile = fis.file.wrap(path.join(root, 'fis-conf.js'));
 
 module.exports = function(ret, pack, settings, opt) {
     const pkgFiles = Object.keys(settings);
     const replaceFiles = settings.replaceFiles;
+    const prefix = settings.modJs || modJs;
     const urlMap = {};
     
     
     pkgFiles.forEach(function(pkgFile) {
-        if (pkgFile === 'replaceFiles') {
+        if (pkgFile === 'replaceFiles' || pkgFile === 'modJs') {
             return;
         }
 
         const packedFile = fis.file.wrap(path.join(root, pkgFile));
-        const contents = packFile(settings[pkgFile], ret);
+        const contents = packFile(settings[pkgFile], ret, prefix);
 
         if (contents) {
             packedFile.setContent(contents);
@@ -55,7 +56,7 @@ module.exports = function(ret, pack, settings, opt) {
 };
 
 
-function packFile(entry, ret) {
+function packFile(entry, ret, prefix) {
     const info = fis.project.lookup(entry, baseFile);
 
     if (info.file) {
@@ -71,14 +72,14 @@ function packFile(entry, ret) {
             });
         }
 
-        return combine(entryFile, ret);
+        return combine(entryFile, ret, prefix);
     } else {
         fis.log.warning(entry + ' is not found!');
     }
 }
 
 // 只考虑同步的，如果 worker 里面还有异步用法再扩充。
-function combine(entryFile, ret) {
+function combine(entryFile, ret, prefix) {
     const list = [];
     const pool = [entryFile];
     const collected = [];
@@ -97,11 +98,7 @@ function combine(entryFile, ret) {
         });
     }
 
-    return modJS + "\n" + list.map(function(file) {
-        if (file.id === entryFile.id) {
-            return "/**! " +file.id+ "*/\n" + file.getContent() + "\nrequire('"+ entryFile.moduleId +"')";
-        }
-
+    return prefix + "\n" + list.map(function(file) {
         return "/**! " +file.id+ "*/\n" + file.getContent();
-    }).join("\n")
+    }).join("\n") + "\nrequire('"+ entryFile.moduleId +"')";
 }
