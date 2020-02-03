@@ -67,7 +67,7 @@ function packFile(entry, ret, prefix) {
             const current = pool.shift();
             fis.compile(current);
 
-            Array.isArray(current.requires) && current.requires.forEach(function(subpath) {
+            Array.isArray(current.links) && current.links.forEach(function(subpath) {
                 pool.push(fis.file.wrap(path.join(root, subpath)));
             });
         }
