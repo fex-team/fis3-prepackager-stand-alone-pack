@@ -7,12 +7,18 @@ const modJs = fs.readFileSync(path.join(__dirname, 'mod.js'), 'utf8');
 const root = fis.project.getProjectPath();
 const baseFile = fis.file.wrap(path.join(root, 'fis-conf.js'));
 
+let combined = false;
+
 module.exports = function(ret, pack, settings, opt) {
+    if (combined) {
+        return;
+    }
+    combined = true;
+
     const pkgFiles = Object.keys(settings);
     const replaceFiles = settings.replaceFiles;
     const prefix = settings.modJs || modJs;
     const urlMap = {};
-    
     
     pkgFiles.forEach(function(pkgFile) {
         if (pkgFile === 'replaceFiles' || pkgFile === 'modJs') {
@@ -20,12 +26,14 @@ module.exports = function(ret, pack, settings, opt) {
         }
 
         const packedFile = fis.file.wrap(path.join(root, pkgFile));
+
         const contents = packFile(settings[pkgFile], ret, prefix);
 
         if (contents) {
             packedFile.setContent(contents);
             urlMap[pkgFile] = packedFile.getUrl(opt.hash, opt.domain);
             ret.pkg[packedFile.subpath] = packedFile;
+
         }
     });
 
@@ -44,6 +52,9 @@ module.exports = function(ret, pack, settings, opt) {
             }
 
             const src = ret.ids[info.file.id];
+            if (!src) {
+                return;
+            }
             let contents = src.getContent();
 
             typeof contents === 'string' && Object.keys(urlMap).forEach(function(origin) {
@@ -53,6 +64,8 @@ module.exports = function(ret, pack, settings, opt) {
             src.setContent(contents);
         });
     }
+
+    
 };
 
 

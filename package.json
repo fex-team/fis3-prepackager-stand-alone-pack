@@ -1,6 +1,6 @@
 {
   "name": "fis3-prepackager-stand-alone-pack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "独立打包 ========================",
   "main": "index.js",
   "scripts": {
